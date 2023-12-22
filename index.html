@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Employee Information and Blood Group Summary</title>
+  <style>
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+
+    th {
+      background-color: darkblue;
+      color: white;
+    }
+
+    h2 {
+      color: darkblue;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Employee Information Table -->
+<h2>Employee Information</h2>
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Name</th>
+      <th>Age</th>
+      <th>Gender</th>
+      <th>Blood Group</th>
+    </tr>
+  </thead>
+  <tbody id="table-body"></tbody>
+</table>
+
+<!-- Blood Group-wise Employee List -->
+<h2>Blood Group-wise Employee List</h2>
+<div id="blood-group-names"></div>
+
+<script>
+  // Fetching employee data from data.json
+  fetch('data.json')
+    .then(response => response.json())
+    .then(data => {
+      // Getting the table body element
+      const tableBody = document.getElementById('table-body');
+
+      // Populating the employee information table
+      data.data.forEach(item => {
+        const row = tableBody.insertRow();
+
+        Object.keys(item).forEach(key => {
+          const cell = row.insertCell();
+          cell.textContent = item[key];
+        });
+      });
+
+      // Preparing blood group-wise employee list
+      const bloodGroupNames = {};
+      data.data.forEach(item => {
+        const bloodGroup = item.bloodGroup;
+        if (!bloodGroupNames[bloodGroup]) {
+          bloodGroupNames[bloodGroup] = [];
+        }
+        bloodGroupNames[bloodGroup].push(item.name);
+      });
+
+      // Displaying blood group-wise employee list
+      const namesDiv = document.getElementById('blood-group-names');
+      namesDiv.innerHTML = '<strong>Blood Group-wise Employee List:</strong><br>';
+
+      let bloodGroupNumber = 1;
+
+      Object.keys(bloodGroupNames).forEach(bloodGroup => {
+        namesDiv.innerHTML += `<strong>${bloodGroupNumber}. ${bloodGroup}:</strong><br>`;
+        bloodGroupNames[bloodGroup].forEach((name, index) => {
+          namesDiv.innerHTML += `&nbsp;&nbsp;&nbsp;&nbsp;${index + 1}. ${name}<br>`;
+        });
+
+        bloodGroupNumber++;
+      });
+    })
+    .catch(error => console.error('Error fetching employee data:', error));
+</script>
+
+</body>
+</html>
